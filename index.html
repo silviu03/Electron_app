@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CTB electron app</title>
+    <link rel="stylesheet" href="./css/bootstrap.min.css">
+    <script src="./js/bootstrap.bundle.min.js"></script>
+    <link rel="stylesheet" href="./main.css">
+</head>
+
+<body>
+    <!-- -primul lucru care se vede este un loader 
+    -main page , meniu are lista clientii(clinetii sunt o lista de a-uri)
+    -click pe un client si se deschid mai multe informatii
+    -cand intri detalii clienti , 2 mari categorii trebuie afisate, o lista cu produsele si o lista cu stocul
+    -cand dai click pe produs se afiseaza o lista de tabele cu PN, descriere, qty, stoc, simulare
+    -o sa am nevoie de o pagina cu formular de upload unde se incarca Excelul
+    -upload trimis catre elecrton de unde sa filtreze anumite informatii
+    -informatii (headerele de la excel, iar pe baza lor se decide maparea informatiilor in baza de date)
+    -trebuie gasita o librarie de import exceluri pentru node.js sau electron
+    -trebuie sa gasesc o librarie care sa ma lase accesez o baza de date sqlite -->
+
+    <div class="container">
+        <header>
+            <h1>Client Database</h1>
+        </header>
+        <div class="client-menu-wrapper">
+            <ul class="nav nav-tabs client-menu">
+                <li class="nav-item">
+                    <a class="nav-link active" aria-current="page" href="#">Oxygen</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">iDrive</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Medisol</a>
+                </li>
+            </ul>
+            <button class="btn btn-primary" id="new-client">New client</button>
+            <form action="" id="new-client-form" class="hide">
+                <div class="row">
+                    <div class="col">
+                        <input type="text" class="form-control client-name" placeholder="Name" aria-label="First name">
+                    </div>
+                    <button type="submit" id="save-new-client" class="btn btn-primary">Save</button>
+                </div>
+            </form>
+        </div>
+        <div class="client-details">
+            <div class="Oxygen-client">
+                <div>
+                    <ul class="nav nav-tabs subcategory">
+                        <li class="nav-item">
+                            <a class="nav-link active" aria-current="page" href="#">Products</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">Stock</a>
+                        </li>
+                    </ul>
+                    <button id="new-product" class="btn btn-primary">New Product</button>
+                    <form action="" id="new-product-form" class="hide">
+                        <div class="row">
+                            <div class="col">
+                                <input type="text" class="form-control product-name" placeholder="Name"
+                                    aria-label="First name">
+                            </div>
+                            <button type="submit" id="save-new-product" class="btn btn-primary">Save</button>
+                        </div>
+                    </form>
+                    <ul id="product-list" class="nav">
+                        <li class="nav-item">
+                            <a class="nav-link btn-outline-success active" aria-current="page" href="#">DC158</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link btn-outline-success" href="#">DC159</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link btn-outline-success" href="#">DC160</a>
+                        </li>
+                    </ul>
+                </div>
+                <div class=" subcategory subcategory-product">
+                    <h3>Product</h3>
+                    <form class="file-form">
+                        <label for="">Upload BOM</label>
+                        <input type="file" id="file-input">
+                        <button type="submit" class="btn btn-secondary" id="BOM-input">Submit</button>
+                    </form>
+                    <table class="table table-hover table-info-ouput">
+                        <tr>
+                            <th class="PN">PN</th>
+                            <th class="description">Description</th>
+                            <th class="qty">Quantity</th>
+                            <th class="stock">Stock</th>
+                            <th class="simulation">Simulation</th>
+                        </tr>
+                        <!-- <tr>
+                            <th class="PN-output"></th>
+                            <th class="description-output"></th>
+                            <th class="qty-output"></th>
+                            <th class="stock-output"></th>
+                            <th class="simulation-output"></th>
+                        </tr> -->
+
+                    </table>
+                </div>
+                <div class=" subcategory subcategory-stock">
+                    <table class="table table-hover">
+                        <h3>Stock</h3>
+                        <button class="btn btn-primary">New PN</button>
+                        <tr>
+                            <th class="PN">PN</th>
+                            <th class="description">Description</th>
+                            <th class="stock">Stock</th>
+                            <th class="inventory">Inventory</th>
+                        </tr>
+                        <tr>
+                            <th>1</th>
+                            <th>1</th>
+                            <th>1</th>
+                            <th>1</th>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+            <div class="iDrive-client">
+
+            </div>
+            <div class="Medisol-client">
+
+            </div>
+        </div>
+    </div>
+
+
+
+</body>
+
+<script>
+    const electron = require('electron');
+    const { ipcRenderer } = electron;
+
+    const newClient = document.getElementById('new-client');
+    const clientForm = document.getElementById('new-client-form');
+    const newProduct = document.getElementById('new-product');
+    const productForm = document.getElementById('new-product-form');
+
+    function newForm() {
+        let eventType;
+        let form = event.target;
+
+        let isProductForm = form.querySelector('input').classList.contains('product-name');
+        if (isProductForm) {
+            eventType = 'product:add';
+        }
+
+        let isClientForm = form.querySelector('input').classList.contains('client-name');
+        if (isClientForm) {
+            eventType = 'client:add';
+        }
+
+        let input = form.querySelector('input').value;
+        ipcRenderer.send(eventType, input);
+
+        const listItem = document.createElement('li');
+        const itemLink = document.createElement('a');
+        const text = document.createTextNode(input);
+
+        itemLink.classList.add('nav-link');
+        itemLink.appendChild(text);
+        listItem.appendChild(itemLink);
+
+        if (isProductForm) {
+            document.getElementById('product-list').appendChild(listItem);
+            itemLink.classList.add('btn-outline-success');
+        }
+        if (isClientForm) {
+            document.querySelector('.client-menu').appendChild(listItem);
+        }
+
+        form.querySelector('input').value = "";
+        form.classList.add('hide');
+
+    }
+
+    newProduct.addEventListener('click', () => {
+        productForm.classList.remove('hide');
+        document.querySelector('.product-name').focus();
+    })
+    newClient.addEventListener('click', () => {
+        clientForm.classList.remove('hide');
+        document.querySelector('.client-name').focus();
+    })
+
+    productForm.addEventListener('submit', (event) => {
+        event.preventDefault();
+        newForm(event);
+    })
+    clientForm.addEventListener('submit', (event) => {
+        event.preventDefault();
+        newForm(event);
+    })
+
+    document.querySelector('.file-form').addEventListener('submit', (event) => {
+        event.preventDefault();
+        const { path } = document.getElementById('file-input').files[0];
+
+        ipcRenderer.send('file:submit', path);
+    });
+
+    ipcRenderer.on('file:rows', (event, rows) => {
+
+        for (let i = 0; i < rows.length; i++) {
+            const uploadedBom = document.createElement('tr');
+            const uploadedPN = document.createElement('th');
+            const uploadedDescription = document.createElement('th');
+            const uploadedQty = document.createElement('th');
+            const uploadedStock = document.createElement('th');
+            const uploadedSimulation = document.createElement('th');
+
+            uploadedBom.appendChild(uploadedPN);
+            uploadedBom.appendChild(uploadedDescription);
+            uploadedBom.appendChild(uploadedQty);
+            uploadedBom.appendChild(uploadedStock);
+            uploadedBom.appendChild(uploadedSimulation);
+
+            uploadedPN.classList.add('PN-output');
+            uploadedPN.innerHTML = `${rows[i].partNumber}`;
+
+            uploadedDescription.classList.add('description-output');
+            uploadedDescription.innerHTML = `${rows[i].partDescription}`;
+            uploadedQty.classList.add('Qty-output');
+            uploadedQty.innerHTML = `${rows[i].partQuantity}`;
+
+            document.querySelector('.table-info-ouput').appendChild(uploadedBom);
+
+        }
+
+
+
+    });
+
+
+
+
+
+
+</script>
+
+</html>

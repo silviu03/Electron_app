@@ -1,0 +1,22 @@
+{
+  "name": "electron.ctb",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "electron": "electron .",
+    "rebuild": "electron-rebuild -f -w sqlite3"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "electron": "^16.0.6",
+    "knex": "^0.95.15",
+    "sqlite3": "^5.0.2",
+    "xlsx": "^0.17.4"
+  },
+  "devDependencies": {
+    "electron-packager": "^15.4.0",
+    "electron-rebuild": "^3.2.5"
+  }
+}
