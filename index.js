@@ -6,10 +6,11 @@ app.disableHardwareAcceleration();
 
 let mainWindow;
 
+
 const knex = require('knex')({
     client: 'sqlite3',
     connection: {
-        filename: "./database/database.sqlite"
+        filename: './database/database.sqlite'
     },
     useNullAsDefault: true,
     log: {
@@ -36,32 +37,79 @@ app.on('ready', () => {
         }
     });
     mainWindow.loadURL(`file://${__dirname}/index.html`);
+})
+
+ipcMain.on('getRecords', (event) => {
+    knex('clients')
+        .select({ id: 'id', name: 'name' })
+        .then((records) => {
+            console.log(records);
+            mainWindow.webContents.send('clients:all', records);
+        })
+        .catch((err) => {
+            console.error(err);
+        });
+
+    knex('products')
+        .select({ id: 'id', name: 'name' })
+        .then((records) => {
+            console.log(records);
+            mainWindow.webContents.send('products:all', records);
+        })
+        .catch((err) => {
+            console.error(err);
+        });
 
 })
 
 ipcMain.on('client:add', (event, clientName) => {
-    console.log(clientName);
-    knex.insert({ id: 1, name: 'clientName', created_at: 'test', updated_at: 'test' }).into("clients");
-    
+    knex('clients')
+        .insert({ name: clientName, created_at: 'test', updated_at: 'test' })
+        .then((id) => {
+            knex('clients')
+                .select({
+                    id: 'id',
+                    name: 'name'
+                })
+                .where({ id })
+                .then((record) => {
+                    console.log(record);
+                })
+        })
+        .catch((err) => {
+            console.error(err);
+        });
 })
 
 ipcMain.on('product:add', (event, prodName) => {
     console.log(prodName);
-    knex("products").insert({ name: prodName });
+    knex('products')
+        .insert({ name: prodName, description: 'test', created_at: 'test', updated_at: 'test' })
+        .then((id) => {
+            knex('products')
+                .select({
+                    id: 'id',
+                    name: 'name'
+                })
+                .where({ id })
+                .then((record) => {
+                    console.log(record);
+                })
+        })
+        .catch((err) => {
+            console.error(err);
+        });
 })
 
 ipcMain.on('file:submit', (event, path) => {
-
     const partNumber = 0;
     const partDescription = 1;
     const partQuantity = 2;
     const workbook = xlsx.readFile(path);
     const worksheet = workbook.Sheets[workbook.SheetNames[0]];
-
     const rows = xlsx.utils.sheet_to_json(worksheet, { header: 1 });
 
     const rowsToSend = [];
-
     for (let i = 1; i < rows.length; i++) {
         const row = {
             partNumber: rows[i][partNumber],
@@ -69,10 +117,10 @@ ipcMain.on('file:submit', (event, path) => {
             partQuantity: rows[i][partQuantity]
         }
         rowsToSend.push(row);
-
     }
-    mainWindow.webContents.send('file:rows', rowsToSend)
 
+    mainWindow.webContents.send('file:rows', rowsToSend)
 })
+
 
 

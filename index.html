@@ -28,17 +28,6 @@
             <h1>Client Database</h1>
         </header>
         <div class="client-menu-wrapper">
-            <ul class="nav nav-tabs client-menu">
-                <li class="nav-item">
-                    <a class="nav-link active" aria-current="page" href="#">Oxygen</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#">iDrive</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#">Medisol</a>
-                </li>
-            </ul>
             <button class="btn btn-primary" id="new-client">New client</button>
             <form action="" id="new-client-form" class="hide">
                 <div class="row">
@@ -48,16 +37,27 @@
                     <button type="submit" id="save-new-client" class="btn btn-primary">Save</button>
                 </div>
             </form>
+            <ul class="nav nav-tabs client-menu">
+                <!-- <li class="nav-item">
+                    <a class="nav-link active" aria-current="page" href="#">Oxygen</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">iDrive</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Medisol</a>
+                </li> -->
+            </ul> 
         </div>
         <div class="client-details">
             <div class="Oxygen-client">
                 <div>
                     <ul class="nav nav-tabs subcategory">
                         <li class="nav-item">
-                            <a class="nav-link active" aria-current="page" href="#">Products</a>
+                            <a class="nav-link products-page" aria-current="page" href="#">Products</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="#">Stock</a>
+                            <a class="nav-link stock-page" href="#">Stock</a>
                         </li>
                     </ul>
                     <button id="new-product" class="btn btn-primary">New Product</button>
@@ -70,6 +70,8 @@
                             <button type="submit" id="save-new-product" class="btn btn-primary">Save</button>
                         </div>
                     </form>
+                </div>
+                <div class=" subcategory subcategory-product hide">
                     <ul id="product-list" class="nav">
                         <li class="nav-item">
                             <a class="nav-link btn-outline-success active" aria-current="page" href="#">DC158</a>
@@ -81,8 +83,6 @@
                             <a class="nav-link btn-outline-success" href="#">DC160</a>
                         </li>
                     </ul>
-                </div>
-                <div class=" subcategory subcategory-product">
                     <h3>Product</h3>
                     <form class="file-form">
                         <label for="">Upload BOM</label>
@@ -97,17 +97,9 @@
                             <th class="stock">Stock</th>
                             <th class="simulation">Simulation</th>
                         </tr>
-                        <!-- <tr>
-                            <th class="PN-output"></th>
-                            <th class="description-output"></th>
-                            <th class="qty-output"></th>
-                            <th class="stock-output"></th>
-                            <th class="simulation-output"></th>
-                        </tr> -->
-
                     </table>
                 </div>
-                <div class=" subcategory subcategory-stock">
+                <div class=" subcategory subcategory-stock hide">
                     <table class="table table-hover">
                         <h3>Stock</h3>
                         <button class="btn btn-primary">New PN</button>
@@ -148,6 +140,39 @@
     const newProduct = document.getElementById('new-product');
     const productForm = document.getElementById('new-product-form');
 
+    ipcRenderer.send('getRecords');
+
+    ipcRenderer.on('clients:all', (event, data) => {
+        for (let i = 0; i < data.length; i++) {
+            const listItem = document.createElement('li');
+            const itemLink = document.createElement('a');
+
+            itemLink.innerHTML = `${data[i].name}`;
+            let newItemLink = listItem.appendChild(itemLink);
+            newItemLink.classList.add('nav-link');
+            listItem.classList.add('nav-item');
+
+            document.querySelector('.client-menu').appendChild(newItemLink); 
+        }
+    });
+    ipcRenderer.on('products:all', (event, data) => {
+        for (let i = 0; i < data.length; i++) {
+            const listItem = document.createElement('li');
+            const itemLink = document.createElement('a');
+
+            itemLink.innerHTML = `${data[i].name}`;
+            let newItemLink = listItem.appendChild(itemLink);
+            newItemLink.classList.add('nav-link');
+            listItem.classList.add('nav-item');
+
+            document.querySelector('.product-list').appendChild(newItemLink); 
+        }
+    });
+
+
+
+
+
     function newForm() {
         let eventType;
         let form = event.target;
@@ -183,7 +208,6 @@
 
         form.querySelector('input').value = "";
         form.classList.add('hide');
-
     }
 
     newProduct.addEventListener('click', () => {
@@ -210,6 +234,33 @@
 
         ipcRenderer.send('file:submit', path);
     });
+
+    const productsPage = document.querySelector('.products-page');
+    const stockPage = document.querySelector('.stock-page');
+    const productCategory = document.querySelector('.subcategory-product');
+    const stockCategory = document.querySelector('.subcategory-stock');
+
+    productsPage.addEventListener('click', (ev) => {
+        productsPage.classList.add('active');
+        stockPage.classList.remove('active');
+        stockCategory.classList.add('hide');
+        if (productsPage.classList.contains('active')) {
+            productCategory.classList.remove('hide');
+        }
+    });
+    stockPage.addEventListener('click', (ev) => {
+        productCategory.classList.add('hide');
+        stockPage.classList.add('active');
+        productsPage.classList.remove('active');
+        if (stockPage.classList.contains('active')) {
+            stockCategory.classList.remove('hide');
+        }
+    })
+
+
+
+
+
 
     ipcRenderer.on('file:rows', (event, rows) => {
 
@@ -245,9 +296,7 @@
 
 
 
-
-
-
 </script>
+
 
 </html>
