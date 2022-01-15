@@ -28,13 +28,14 @@
             <h1>Client Database</h1>
         </header>
         <div class="client-menu-wrapper">
-            <button class="btn btn-primary" id="new-client">New client</button>
+            <button class="btn btn-primary btn-sm" id="new-client">New client</button>
             <form action="" id="new-client-form" class="hide">
                 <div class="row">
                     <div class="col">
-                        <input type="text" class="form-control client-name" placeholder="Name" aria-label="First name">
+                        <input type="text" class="form-control form-control-sm client-name" placeholder="Name"
+                            aria-label="First name">
                     </div>
-                    <button type="submit" id="save-new-client" class="btn btn-primary">Save</button>
+                    <button type="submit" id="save-new-client" class="btn btn-primary btn-sm">Save</button>
                 </div>
             </form>
             <ul class="nav nav-tabs client-menu">
@@ -47,47 +48,37 @@
                 <li class="nav-item">
                     <a class="nav-link" href="#">Medisol</a>
                 </li> -->
-            </ul> 
+            </ul>
         </div>
         <div class="client-details">
             <div class="Oxygen-client">
+                <a class="products-page" aria-current="page" href="#">Products</a>
                 <div>
-                    <ul class="nav nav-tabs subcategory">
-                        <li class="nav-item">
-                            <a class="nav-link products-page" aria-current="page" href="#">Products</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link stock-page" href="#">Stock</a>
-                        </li>
-                    </ul>
-                    <button id="new-product" class="btn btn-primary">New Product</button>
+                    <button id="new-product" class="btn btn-primary btn-sm">New Product</button>
                     <form action="" id="new-product-form" class="hide">
                         <div class="row">
                             <div class="col">
-                                <input type="text" class="form-control product-name" placeholder="Name"
+                                <input type="text" class="form-control form-control-sm product-name " placeholder="Name"
                                     aria-label="First name">
                             </div>
-                            <button type="submit" id="save-new-product" class="btn btn-primary">Save</button>
+                            <button type="submit" id="save-new-product" class="btn btn-primary btn-sm">Save</button>
                         </div>
                     </form>
                 </div>
+ 
                 <div class=" subcategory subcategory-product hide">
                     <ul id="product-list" class="nav">
-                        <li class="nav-item">
+                        <!-- <li class="nav-item">
                             <a class="nav-link btn-outline-success active" aria-current="page" href="#">DC158</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link btn-outline-success" href="#">DC159</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link btn-outline-success" href="#">DC160</a>
-                        </li>
+                        </li> -->
                     </ul>
-                    <h3>Product</h3>
                     <form class="file-form">
                         <label for="">Upload BOM</label>
                         <input type="file" id="file-input">
-                        <button type="submit" class="btn btn-secondary" id="BOM-input">Submit</button>
+                        <button type="submit" class="btn btn-secondary btn-sm" id="BOM-input">Submit</button>
                     </form>
                     <table class="table table-hover table-info-ouput">
                         <tr>
@@ -99,10 +90,22 @@
                         </tr>
                     </table>
                 </div>
+
+                <a class="stock-page" href="#">Stock</a>
                 <div class=" subcategory subcategory-stock hide">
+                    <h3>Stock</h3>
+                    <button class="btn btn-primary btn-sm">New PN</button>
+
+                    <form action="" id="new-pn-form" class="">
+                        <div class="row ">
+                            <div class="col">
+                                <input type="text" class="form-control pn-name" placeholder="dfgdsfdf"
+                                    aria-label="First name">
+                            </div>
+                            <button type="submit" id="save-new-pn" class="btn btn-primary btn-sm">Save</button>
+                        </div>
+                    </form>
                     <table class="table table-hover">
-                        <h3>Stock</h3>
-                        <button class="btn btn-primary">New PN</button>
                         <tr>
                             <th class="PN">PN</th>
                             <th class="description">Description</th>
@@ -152,7 +155,7 @@
             newItemLink.classList.add('nav-link');
             listItem.classList.add('nav-item');
 
-            document.querySelector('.client-menu').appendChild(newItemLink); 
+            document.querySelector('.client-menu').appendChild(newItemLink);
         }
     });
     ipcRenderer.on('products:all', (event, data) => {
@@ -165,7 +168,7 @@
             newItemLink.classList.add('nav-link');
             listItem.classList.add('nav-item');
 
-            document.querySelector('.product-list').appendChild(newItemLink); 
+            document.querySelector('#product-list').appendChild(newItemLink);
         }
     });
 
@@ -247,6 +250,7 @@
         if (productsPage.classList.contains('active')) {
             productCategory.classList.remove('hide');
         }
+
     });
     stockPage.addEventListener('click', (ev) => {
         productCategory.classList.add('hide');

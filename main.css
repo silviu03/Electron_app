@@ -62,6 +62,7 @@ html, body {
     background-color: #198754;
     color: #fff;
 }
+
 .file-form {
     display: flex;
     align-items: center;
@@ -74,8 +75,19 @@ html, body {
 }
 .btn-secondary {
     padding: 5px 9px;
-
 }
+#new-pn-form {
+    display: flex;
+    align-items: center;
+    width: 240px;
+    height: 40px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+ #save-new-pn {
+    width: 60px;
+}
+
 
 
 .hide {

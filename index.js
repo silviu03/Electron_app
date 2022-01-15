@@ -34,7 +34,9 @@ app.on('ready', () => {
         webPreferences: {
             nodeIntegration: true,
             contextIsolation: false
-        }
+        },
+        width: 1400, 
+        height: 900
     });
     mainWindow.loadURL(`file://${__dirname}/index.html`);
 })
