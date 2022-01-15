@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="./css/bootstrap.min.css">
     <script src="./js/bootstrap.bundle.min.js"></script>
     <link rel="stylesheet" href="./main.css">
+    <link rel="stylesheet" href="./bundles/font.awesome/fontawesome-free-5.15.4-web/css/all.min.css">
 </head>
 
 <body>
@@ -22,37 +23,91 @@
     -informatii (headerele de la excel, iar pe baza lor se decide maparea informatiilor in baza de date)
     -trebuie gasita o librarie de import exceluri pentru node.js sau electron
     -trebuie sa gasesc o librarie care sa ma lase accesez o baza de date sqlite -->
-
-    <div class="container">
+    <div class="main-container">
         <header>
-            <h1>Client Database</h1>
+            <h1>Title</h1>
         </header>
-        <div class="client-menu-wrapper">
-            <button class="btn btn-primary btn-sm" id="new-client">New client</button>
-            <form action="" id="new-client-form" class="hide">
-                <div class="row">
-                    <div class="col">
-                        <input type="text" class="form-control form-control-sm client-name" placeholder="Name"
-                            aria-label="First name">
+        <section class="section-1">
+            <div class="left-client-col">
+                <span>Clients</span>
+            </div>
+            <div class="client-menu-wrapper">
+                <ul class="nav nav-tabs client-menu">
+                    <!-- new clients -->
+                </ul>
+            </div>
+            <div class="right-client-col">
+                <button class="btn btn-primary btn-sm" id="new-client">New client</button>
+                <form action="" id="new-client-form" class="hide">
+                    <div class="row">
+                        <div class="col">
+                            <input type="text" class="form-control form-control-sm client-name" placeholder="Name"
+                                aria-label="First name">
+                        </div>
+                        <button type="submit" id="save-new-client" class="btn btn-primary btn-sm">Save</button>
                     </div>
-                    <button type="submit" id="save-new-client" class="btn btn-primary btn-sm">Save</button>
+                </form>
+            </div>
+        </section>
+
+        <section class="section-2">
+            <div class="left-product-col">
+                <span>Products</span>
+            </div>
+            <div class="products-wrapper">
+                <div class="Oxygen-client">
+                    <div class=" subcategory subcategory-product">
+                        <ul id="product-list" class="nav">
+                            <!-- new products -->
+                        </ul>
+                        <table class="table table-hover table-info-ouput">
+                            <tr>
+                                <th class="PN">PN</th>
+                                <th class="description">Description</th>
+                                <th class="qty">Quantity</th>
+                                <th class="stock">Stock</th>
+                                <th class="simulation">Simulation</th>
+                            </tr>
+                        </table>
+                    </div>
+
+                    <div class=" subcategory subcategory-stock">
+                        <h3>Stock</h3>
+                        <button class="btn btn-primary btn-sm">New PN</button>
+
+                        <form action="" id="new-pn-form" class="hide">
+                            <div class="row ">
+                                <div class="col">
+                                    <input type="text" class="form-control pn-name" placeholder="dfgdsfdf"
+                                        aria-label="First name">
+                                </div>
+                                <button type="submit" id="save-new-pn" class="btn btn-primary btn-sm">Save</button>
+                            </div>
+                        </form>
+                        <table class="table table-hover">
+                            <tr>
+                                <th class="PN">PN</th>
+                                <th class="description">Description</th>
+                                <th class="stock">Stock</th>
+                                <th class="inventory">Inventory</th>
+                            </tr>
+                            <tr>
+                                <th>1</th>
+                                <th>1</th>
+                                <th>1</th>
+                                <th>1</th>
+                            </tr>
+                        </table>
+                    </div>
                 </div>
-            </form>
-            <ul class="nav nav-tabs client-menu">
-                <!-- <li class="nav-item">
-                    <a class="nav-link active" aria-current="page" href="#">Oxygen</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#">iDrive</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#">Medisol</a>
-                </li> -->
-            </ul>
-        </div>
-        <div class="client-details">
-            <div class="Oxygen-client">
-                <a class="products-page" aria-current="page" href="#">Products</a>
+                <div class="iDrive-client">
+
+                </div>
+                <div class="Medisol-client">
+
+                </div>
+            </div>
+            <div class="right-product-col">
                 <div>
                     <button id="new-product" class="btn btn-primary btn-sm">New Product</button>
                     <form action="" id="new-product-form" class="hide">
@@ -65,69 +120,28 @@
                         </div>
                     </form>
                 </div>
- 
-                <div class=" subcategory subcategory-product hide">
-                    <ul id="product-list" class="nav">
-                        <!-- <li class="nav-item">
-                            <a class="nav-link btn-outline-success active" aria-current="page" href="#">DC158</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link btn-outline-success" href="#">DC159</a>
-                        </li> -->
-                    </ul>
-                    <form class="file-form">
-                        <label for="">Upload BOM</label>
-                        <input type="file" id="file-input">
-                        <button type="submit" class="btn btn-secondary btn-sm" id="BOM-input">Submit</button>
-                    </form>
-                    <table class="table table-hover table-info-ouput">
-                        <tr>
-                            <th class="PN">PN</th>
-                            <th class="description">Description</th>
-                            <th class="qty">Quantity</th>
-                            <th class="stock">Stock</th>
-                            <th class="simulation">Simulation</th>
-                        </tr>
-                    </table>
-                </div>
-
-                <a class="stock-page" href="#">Stock</a>
-                <div class=" subcategory subcategory-stock hide">
-                    <h3>Stock</h3>
-                    <button class="btn btn-primary btn-sm">New PN</button>
-
-                    <form action="" id="new-pn-form" class="">
-                        <div class="row ">
-                            <div class="col">
-                                <input type="text" class="form-control pn-name" placeholder="dfgdsfdf"
-                                    aria-label="First name">
+                <div class="upload-wrapper">
+                    <button id="upload" class="btn btn-primary btn-sm">Upload</button>
+                    <div class="overlay">
+                        <div>
+                            <form class="file-form ">
+                                <!-- <label for="">Upload BOM</label>
+                            <input type="file" id="file-input">
+                            <button type="submit" class="btn btn-secondary btn-sm" id="BOM-input">Submit</button> -->
+                                <input type="file" class="form-control" id="file-input"
+                                    aria-describedby="inputGroupFileAddon04" aria-label="Upload">
+                                <button type="submit" class="btn btn-outline-secondary" id="BOM-input">Submit</button>
+                            </form>
+                            <div class="close-overlay">
+                                <i class="fas fa-times"></i>
                             </div>
-                            <button type="submit" id="save-new-pn" class="btn btn-primary btn-sm">Save</button>
                         </div>
-                    </form>
-                    <table class="table table-hover">
-                        <tr>
-                            <th class="PN">PN</th>
-                            <th class="description">Description</th>
-                            <th class="stock">Stock</th>
-                            <th class="inventory">Inventory</th>
-                        </tr>
-                        <tr>
-                            <th>1</th>
-                            <th>1</th>
-                            <th>1</th>
-                            <th>1</th>
-                        </tr>
-                    </table>
+                    </div>
+
                 </div>
-            </div>
-            <div class="iDrive-client">
 
             </div>
-            <div class="Medisol-client">
-
-            </div>
-        </div>
+        </section>
     </div>
 
 
