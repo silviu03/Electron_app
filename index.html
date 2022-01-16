@@ -13,16 +13,7 @@
 </head>
 
 <body>
-    <!-- -primul lucru care se vede este un loader 
-    -main page , meniu are lista clientii(clinetii sunt o lista de a-uri)
-    -click pe un client si se deschid mai multe informatii
-    -cand intri detalii clienti , 2 mari categorii trebuie afisate, o lista cu produsele si o lista cu stocul
-    -cand dai click pe produs se afiseaza o lista de tabele cu PN, descriere, qty, stoc, simulare
-    -o sa am nevoie de o pagina cu formular de upload unde se incarca Excelul
-    -upload trimis catre elecrton de unde sa filtreze anumite informatii
-    -informatii (headerele de la excel, iar pe baza lor se decide maparea informatiilor in baza de date)
-    -trebuie gasita o librarie de import exceluri pentru node.js sau electron
-    -trebuie sa gasesc o librarie care sa ma lase accesez o baza de date sqlite -->
+
     <div class="main-container">
         <header>
             <h1>Title</h1>
@@ -37,7 +28,10 @@
                 </ul>
             </div>
             <div class="right-client-col">
-                <button class="btn btn-primary btn-sm" id="new-client">New client</button>
+                <div>
+                    <button class="btn btn-primary btn-sm" id="new-client">New client</button>
+                    <button class="btn btn-danger btn-sm" id="old-client">Delete</button>
+                </div>
                 <form action="" id="new-client-form" class="hide">
                     <div class="row">
                         <div class="col">
@@ -57,18 +51,22 @@
             <div class="products-wrapper">
                 <div class="Oxygen-client">
                     <div class=" subcategory subcategory-product">
-                        <ul id="product-list" class="nav">
+                        <ul id="product-list" class="nav nav-tabs">
                             <!-- new products -->
                         </ul>
-                        <table class="table table-hover table-info-ouput">
-                            <tr>
-                                <th class="PN">PN</th>
-                                <th class="description">Description</th>
-                                <th class="qty">Quantity</th>
-                                <th class="stock">Stock</th>
-                                <th class="simulation">Simulation</th>
-                            </tr>
-                        </table>
+                        <div class="table-wrapper">
+                            <table class="table table-hover table-info-ouput">
+                                <tr class="main-row">
+                                    <th class="PN fit-content">PN</th>
+                                    <th class="description">Description</th>
+                                    <th class="qty fit-content">Quantity</th>
+                                    <th class="stock fit-content">Stock</th>
+                                    <th class="produced fit-content">Produced</th>
+                                    <th class="simulation fit-content">Simulation</th>
+                                </tr>
+                            </table>
+                        </div>
+
                     </div>
 
                     <div class=" subcategory subcategory-stock">
@@ -85,7 +83,7 @@
                             </div>
                         </form>
                         <table class="table table-hover">
-                            <tr>
+                            <tr class="main-row">
                                 <th class="PN">PN</th>
                                 <th class="description">Description</th>
                                 <th class="stock">Stock</th>
@@ -122,12 +120,9 @@
                 </div>
                 <div class="upload-wrapper">
                     <button id="upload" class="btn btn-primary btn-sm">Upload</button>
-                    <div class="overlay">
+                    <div class="overlay hide">
                         <div>
                             <form class="file-form ">
-                                <!-- <label for="">Upload BOM</label>
-                            <input type="file" id="file-input">
-                            <button type="submit" class="btn btn-secondary btn-sm" id="BOM-input">Submit</button> -->
                                 <input type="file" class="form-control" id="file-input"
                                     aria-describedby="inputGroupFileAddon04" aria-label="Upload">
                                 <button type="submit" class="btn btn-outline-secondary" id="BOM-input">Submit</button>
@@ -185,8 +180,6 @@
             document.querySelector('#product-list').appendChild(newItemLink);
         }
     });
-
-
 
 
 
@@ -252,35 +245,22 @@
         ipcRenderer.send('file:submit', path);
     });
 
-    const productsPage = document.querySelector('.products-page');
-    const stockPage = document.querySelector('.stock-page');
-    const productCategory = document.querySelector('.subcategory-product');
-    const stockCategory = document.querySelector('.subcategory-stock');
-
-    productsPage.addEventListener('click', (ev) => {
-        productsPage.classList.add('active');
-        stockPage.classList.remove('active');
-        stockCategory.classList.add('hide');
-        if (productsPage.classList.contains('active')) {
-            productCategory.classList.remove('hide');
-        }
-
+    const upload = document.getElementById('upload');
+    const overlay = document.querySelector('.overlay');
+    const closeOverlay = document.querySelector('.close-overlay');
+    upload.addEventListener('click', () => {
+        overlay.classList.remove('hide');
     });
-    stockPage.addEventListener('click', (ev) => {
-        productCategory.classList.add('hide');
-        stockPage.classList.add('active');
-        productsPage.classList.remove('active');
-        if (stockPage.classList.contains('active')) {
-            stockCategory.classList.remove('hide');
-        }
-    })
+    closeOverlay.addEventListener('click', () => {
+        overlay.classList.add('hide');
+    });
 
 
 
 
 
-
-    ipcRenderer.on('file:rows', (event, rows) => {
+    ipcRenderer.on('parts:all', (event, rows) => {
+        console.log(rows)
 
         for (let i = 0; i < rows.length; i++) {
             const uploadedBom = document.createElement('tr');
@@ -288,21 +268,23 @@
             const uploadedDescription = document.createElement('th');
             const uploadedQty = document.createElement('th');
             const uploadedStock = document.createElement('th');
+            const uploadedProduced = document.createElement('th');
             const uploadedSimulation = document.createElement('th');
 
             uploadedBom.appendChild(uploadedPN);
             uploadedBom.appendChild(uploadedDescription);
             uploadedBom.appendChild(uploadedQty);
             uploadedBom.appendChild(uploadedStock);
+            uploadedBom.appendChild(uploadedProduced);
             uploadedBom.appendChild(uploadedSimulation);
 
             uploadedPN.classList.add('PN-output');
-            uploadedPN.innerHTML = `${rows[i].partNumber}`;
+            uploadedPN.innerHTML = `${rows[i].pn}`;
 
             uploadedDescription.classList.add('description-output');
-            uploadedDescription.innerHTML = `${rows[i].partDescription}`;
+            uploadedDescription.innerHTML = `${rows[i].description}`;
             uploadedQty.classList.add('Qty-output');
-            uploadedQty.innerHTML = `${rows[i].partQuantity}`;
+            uploadedQty.innerHTML = `${rows[i].quantity}`;
 
             document.querySelector('.table-info-ouput').appendChild(uploadedBom);
 

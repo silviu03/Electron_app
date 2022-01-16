@@ -62,6 +62,16 @@ ipcMain.on('getRecords', (event) => {
             console.error(err);
         });
 
+    knex('parts')
+        .select({ id: 'id', pn: 'pn', description: 'description', quantity: 'quantity', stock: 'stock' })
+        .then((records) => {
+            console.log(records);
+            mainWindow.webContents.send('parts:all', records);
+        })
+        .catch((err) => {
+            console.error(err);
+        });
+
 })
 
 ipcMain.on('client:add', (event, clientName) => {
@@ -119,9 +129,37 @@ ipcMain.on('file:submit', (event, path) => {
             partQuantity: rows[i][partQuantity]
         }
         rowsToSend.push(row);
+
+        console.log(row)
+
+        knex('parts')
+        .insert({ pn: row.partNumber, description: row.partDescription, quantity: row.partQuantity, stock: 5, created_at: 'test', updated_at: 'test' })
+        .then((id) => {
+            knex('parts')
+                .select({
+                    id: 'id'
+                })
+                .where({ id })
+                .then((record) => {
+                    console.log(record);
+                })
+        })
+        .catch((err) => {
+            console.error(err);
+        });
     }
 
-    mainWindow.webContents.send('file:rows', rowsToSend)
+    knex('parts')
+        .select({ id: 'id', pn: 'pn', description: 'description', quantity: 'quantity', stock: 'stock' })
+        .then((records) => {
+            console.log(records);
+            mainWindow.webContents.send('parts:all', records);
+        })
+        .catch((err) => {
+            console.error(err);
+        });
+
+    // mainWindow.webContents.send('file:rows', rowsToSend)
 })
 
 

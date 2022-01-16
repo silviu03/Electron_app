@@ -38,7 +38,15 @@ header {
 }
 .right-client-col {
     width: 20%;
-
+}
+.right-client-col > div {
+    display: flex;
+    align-items: baseline;
+}
+.nav-tabs .nav-link:hover {
+    background-color: rgb(2, 151, 2);
+    color: #fff;
+    cursor: pointer;
 }
 .section-2 {
     display: flex;
@@ -68,6 +76,7 @@ header {
 
 #new-client {
     margin-top: 10px;
+    margin-right: 10px;
 }
 .nav-tabs .nav-item.show .nav-link, .nav-tabs .nav-link.active {
     font-weight: bold;
@@ -78,7 +87,7 @@ header {
     margin-top: 10px;
 }
 .client-name {
-    width: 120px;
+    width: 110px;
 }
 #new-client-form button {
     width: 60px;
@@ -94,6 +103,28 @@ header {
     height: 40px;
     margin-top: 10px;
     margin-bottom: 10px;
+}
+.table-wrapper {
+    max-height: 500px;
+    overflow-y: scroll;
+}
+.table tr {
+    border-bottom: 1px solid #dee2e6;
+}
+.table tr:hover {
+    background-color: #e9ecef;
+}
+.table tr th {
+    font-weight: lighter;
+}
+table .main-row th {
+    font-weight: bold;
+}
+.table>:not(:first-child) {
+    border-top: 0;
+}
+table .fit-content {
+    width: 120px;
 }
 .product-name {
     width: 120px;
@@ -182,7 +213,7 @@ header {
 
 
 .hide {
-    display: none;
+    display: none !important;
 }
 
 
