@@ -30,7 +30,7 @@
             <div class="right-client-col">
                 <div>
                     <button class="btn btn-primary btn-sm" id="new-client">New client</button>
-                    <button class="btn btn-danger btn-sm" id="old-client">Delete</button>
+                    <button class="btn btn-danger btn-sm" id="delete-client">Delete</button>
                 </div>
                 <form action="" id="new-client-form" class="hide">
                     <div class="row">
@@ -151,6 +151,9 @@
     const clientForm = document.getElementById('new-client-form');
     const newProduct = document.getElementById('new-product');
     const productForm = document.getElementById('new-product-form');
+    const clientMenu = document.querySelector('.client-menu');
+    const deleteClient = document.getElementById('delete-client');
+
 
     ipcRenderer.send('getRecords');
 
@@ -164,9 +167,28 @@
             newItemLink.classList.add('nav-link');
             listItem.classList.add('nav-item');
 
-            document.querySelector('.client-menu').appendChild(newItemLink);
+            clientMenu.appendChild(newItemLink);
+
+            newItemLink.addEventListener("click", function (ev) {
+                var current = document.getElementsByClassName("active");
+                if (current.length > 0) {
+                    current[0].className = current[0].className.replace(" active", "");
+                }
+                this.className += " active";
+            });
+
         }
     });
+
+    deleteClient.addEventListener('click', (event) => {
+        
+        let focused = document.querySelector('.client-menu').querySelector('.active');
+        console.log(focused);
+        focused.classList.add('hide');
+
+
+    });
+
     ipcRenderer.on('products:all', (event, data) => {
         for (let i = 0; i < data.length; i++) {
             const listItem = document.createElement('li');
@@ -180,8 +202,6 @@
             document.querySelector('#product-list').appendChild(newItemLink);
         }
     });
-
-
 
     function newForm() {
         let eventType;
